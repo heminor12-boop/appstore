@@ -1,0 +1,93 @@
+// ربط أحداث التحميل (فتح الرابط + إظهار الإعلان الثاني)
+        document.querySelectorAll('.download-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const link = btn.getAttribute('data-link');
+                if (link && link !== '#') {
+                    // فتح رابط التطبيق في تبويب جديد
+                    window.open(link, '_blank');
+                } else {
+                    alert('رابط التحميل غير متوفر حالياً');
+                }
+                // إظهار إعلان theoreticalassertshame عند كل نقرة على تحميل
+                window.open('https://theoreticalassertshame.com/mqgnurhg1u?key=a1386e7aa6e043bf12de739b2b34ef8f', '_blank');
+            });
+        });
+
+        // أحداث الحذف
+        document.querySelectorAll('.delete-app').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const name = btn.getAttribute('data-name');
+                if (confirm(هل تريد حذف التطبيق "${name}" نهائياً؟)) {
+                    apps = apps.filter(app => app.name !== name);
+                    saveAppsToLocal();
+                    renderApps(document.getElementById('searchInput').value);
+                }
+            });
+        });
+    }
+
+    function addApp(name, desc, link, icon) {
+        if (!name.trim() || !link.trim()) {
+            alert('يرجى إدخال اسم التطبيق ورابط التحميل على الأقل');
+            return false;
+        }
+        apps.push({
+            name: name.trim(),
+            desc: desc.trim() || 'تطبيق رائع',
+            link: link.trim(),
+            icon: icon.trim() || 'fas fa-mobile-alt'
+        });
+        saveAppsToLocal();
+        return true;
+    }
+
+    function initDefaultApps() {
+        const stored = localStorage.getItem('myApps');
+        if (stored) {
+            apps = JSON.parse(stored);
+        } else {
+            apps = [
+                { name: "تطبيق البث المباشر", desc: "شاهد القنوات الرياضية والأفلام بجودة HD", link: "#", icon: "fas fa-tv" },
+                { name: "مدير الملفات المتقدم", desc: "نظام متقدم لإدارة ملفات الجهاز", link: "#", icon: "fas fa-folder-open" },
+                { name: "مصمم الجرافيك", desc: "اصنع تصاميم احترافية بسهولة", link: "#", icon: "fas fa-paint-brush" }
+            ];
+            saveAppsToLocal();
+        }
+    }
+
+    // إعداد المودال والأزرار
+    const modal = document.getElementById('appModal');
+    const openBtn = document.getElementById('openModalBtn');
+    const closeBtn = document.getElementById('closeModalBtn');
+    const saveBtn = document.getElementById('saveAppBtn');
+
+    openBtn.onclick = () => { modal.style.display = 'flex'; };
+    closeBtn.onclick = () => { modal.style.display = 'none'; };
+    window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+
+    saveBtn.onclick = () => {
+        const name = document.getElementById('appName').value;
+        const desc = document.getElementById('appDesc').value;
+        const link = document.getElementById('appLink').value;
+        const icon = document.getElementById('appIcon').value;
+        if (addApp(name, desc, link, icon)) {
+            modal.style.display = 'none';
+            document.getElementById('appName').value = '';
+            document.getElementById('appDesc').value = '';
+            document.getElementById('appLink').value = '';
+            document.getElementById('appIcon').value = '';
+            renderApps(document.getElementById('searchInput').value);
+        }
+    };
+
+    // البحث
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        renderApps(e.target.value);
+    });
+
+    // بدء التشغيل
+    initDefaultApps();
+    renderApps('');
+</script>
+</body>
+</html>
